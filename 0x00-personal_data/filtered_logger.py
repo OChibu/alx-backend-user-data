@@ -3,7 +3,6 @@
 Personal data
 """
 
-
 import logging
 import os
 import re
@@ -15,7 +14,6 @@ PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
-    """ Replacing """
     for f in fields:
         message = re.sub(rf"{f}=(.*?)\{separator}",
                          f'{f}={redaction}{separator}', message)
@@ -23,27 +21,20 @@ def filter_datum(fields: List[str], redaction: str, message: str,
 
 
 class RedactingFormatter(logging.Formatter):
-    """ RedactingFormatter class. """
-
     REDACTION = "***"
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
-        """ Init """
         self.fields = fields
         super(RedactingFormatter, self).__init__(self.FORMAT)
 
     def format(self, record: logging.LogRecord) -> str:
-        """ Format """
         return filter_datum(self.fields, self.REDACTION,
                             super().format(record), self.SEPARATOR)
 
 
 def get_logger() -> logging.Logger:
-    """ Implementing a logger.
-    """
-
     logger = logging.getLogger("user_data")
     logger.setLevel(logging.INFO)
     logger.propagate = False
@@ -54,8 +45,6 @@ def get_logger() -> logging.Logger:
 
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
-    """ Get a connector to the database. """
-
     db_username = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
     db_password = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
     db_host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
@@ -72,8 +61,6 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
 
 
 def main() -> None:
-    """ Implement a main function
-    """
     db = get_db()
     cursor = db.cursor()
     cursor.execute("SELECT * FROM users;")
@@ -82,11 +69,12 @@ def main() -> None:
     log = get_logger()
 
     for row in data:
-        fields = 'name={}; email={}; phone={}; ssn={}; password={}; ip={}; '\
-            'last_login={}; user_agent={};'
+        fields = 'name={}; email={}; phone={}; ssn={}; password={}; ip={}; ' \
+                 'last_login={}; user_agent={};'
         fields = fields.format(row[0], row[1], row[2], row[3],
                                row[4], row[5], row[6], row[7])
         log.info(fields)
+
     cursor.close()
     db.close()
 
