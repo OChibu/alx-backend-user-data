@@ -1,0 +1,1 @@
+Welcome to the Session Authentication module. This module is designed to provide a comprehensive guide on implementing session-based authentication in web applications. Session authentication is a common method for managing user authentication and authorization. This module aims to cover the fundamentals of session authentication, its benefits, and practical examples.
